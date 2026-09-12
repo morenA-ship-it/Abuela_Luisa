@@ -4,6 +4,12 @@ Una aplicación web progresiva (**PWA**) diseñada especialmente para adultos ma
 
 ---
 
+### 🌐 Enlace Directo a la App:
+> ### 🔗 **[https://morena-ship-it.github.io/Abuela_Luisa/](https://morena-ship-it.github.io/Abuela_Luisa/)**
+> *Haz clic en el enlace desde cualquier celular o computadora para abrir la aplicación e instalarla.*
+
+---
+
 ## ✨ Características Principales
 
 - 📞 **Llamadas Rápidas con un Toque**:
