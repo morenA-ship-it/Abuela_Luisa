@@ -1,0 +1,25 @@
+{
+  "name": "App de Luisa",
+  "short_name": "App Luisa",
+  "description": "App personal de Luisa — Llamadas rápidas, emergencias y carnet de salud.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#b8d4f8",
+  "theme_color": "#b8d4f8",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "Gemini_Generated_Image_i15jrti15jrti15j.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "Gemini_Generated_Image_i15jrti15jrti15j.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

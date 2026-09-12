@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#b8d4f8" />
+  <meta name="description" content="App personal de Luisa — Llamadas rápidas, emergencias y carnet de salud." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="App Luisa" />
+  <link rel="manifest" href="manifest.json" />
+  <!-- Ícono de la app (celular, escritorio, favoritos) -->
+  <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_i15jrti15jrti15j.jpg" />
+  <link rel="apple-touch-icon" href="Gemini_Generated_Image_i15jrti15jrti15j.jpg" />
+  <meta property="og:image" content="Gemini_Generated_Image_i15jrti15jrti15j.jpg" />
+  <title>App de Luisa</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Nunito', 'sans-serif'] },
+          colors: {
+            sky:    { soft: '#b8d4f8', light: '#d6eaff', dark: '#6aa8e8' },
+            violet: { soft: '#d4b8f8', light: '#ead6ff', dark: '#a87ae8' },
+            mint:   { soft: '#b8f8d4', light: '#d6ffe8' },
+            rose:   { soft: '#f8b8b8', light: '#ffd6d6', deep: '#d94040' },
+          },
+          boxShadow: {
+            card:  '0 4px 24px 0 rgba(100,120,200,.13)',
+            btn:   '0 4px 16px 0 rgba(100,100,200,.18)',
+            emer:  '0 4px 20px 0 rgba(220,60,60,.25)',
+          },
+          borderRadius: { '2xl': '1rem', '3xl': '1.5rem', '4xl': '2rem' },
+          animation: {
+            pulse2: 'pulse 1.6s cubic-bezier(0.4,0,0.6,1) infinite',
+          }
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ─── Global ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #f0f4ff;
+      min-height: 100dvh;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ─── Header gradient ──────────────────────────────────────── */
+    .header-gradient {
+      background: linear-gradient(135deg, #b8d4f8 0%, #d4b8f8 100%);
+    }
+
+    /* ─── Section title pill ───────────────────────────────────── */
+    .section-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .35rem 1.1rem;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: .01em;
+      color: #4a4080;
+      background: #ead6ff;
+      margin-bottom: 1rem;
+    }
+
+    /* ─── Call buttons ─────────────────────────────────────────── */
+    .call-btn {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+      padding: 1.1rem 1.4rem;
+      border-radius: 1.25rem;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #2d3a6a;
+      background: #ffffff;
+      border: 2.5px solid #b8d4f8;
+      box-shadow: 0 4px 16px 0 rgba(100,120,220,.12);
+      text-decoration: none;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      -webkit-user-select: none;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .call-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #d6eaff 0%, #ead6ff 100%);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .call-btn:hover::before, .call-btn:focus-visible::before { opacity: 1; }
+    .call-btn:active { transform: scale(.97); box-shadow: none; }
+    .call-btn:focus-visible { outline: 3px solid #7a8ee8; outline-offset: 3px; }
+
+    .call-btn .avatar {
+      width: 3rem; height: 3rem; min-width: 3rem;
+      border-radius: 999px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      background: linear-gradient(135deg, #b8d4f8 0%, #d4b8f8 100%);
+      position: relative; z-index: 1;
+    }
+    .call-btn .label { position: relative; z-index: 1; line-height: 1.2; }
+    .call-btn .label small {
+      display: block;
+      font-size: .8rem;
+      font-weight: 600;
+      color: #7a88b0;
+    }
+    .call-btn .arrow {
+      margin-left: auto;
+      font-size: 1.2rem;
+      opacity: .35;
+      position: relative; z-index: 1;
+    }
+
+    /* ─── Sibling variant ──────────────────────────────────────── */
+    .call-btn.sibling { border-color: #d4b8f8; }
+    .call-btn.sibling .avatar {
+      background: linear-gradient(135deg, #d4b8f8 0%, #b8d4f8 100%);
+    }
+
+    /* ─── Emergency buttons ────────────────────────────────────── */
+    .emer-btn {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+      padding: 1.2rem 1.4rem;
+      border-radius: 1.25rem;
+      font-size: 1.3rem;
+      font-weight: 800;
+      text-decoration: none;
+      color: #fff;
+      box-shadow: 0 4px 20px 0 rgba(180,40,40,.22);
+      transition: transform .15s ease, filter .15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .emer-btn.red   { background: linear-gradient(135deg, #e84444 0%, #c02020 100%); }
+    .emer-btn.teal  { background: linear-gradient(135deg, #4a9ed4 0%, #7060c8 100%); }
+    .emer-btn.green { background: linear-gradient(135deg, #38b28a 0%, #2d7a60 100%); }
+    .emer-btn:hover  { filter: brightness(1.08); }
+    .emer-btn:active { transform: scale(.97); }
+    .emer-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+    .emer-btn .big-icon { font-size: 2rem; }
+    .emer-btn .label   { line-height: 1.2; }
+    .emer-btn .label small {
+      display: block; font-size: .78rem; font-weight: 600; opacity: .85;
+    }
+    .emer-btn .arrow { margin-left: auto; opacity: .6; font-size: 1.2rem; }
+
+    /* ─── Pulse ring on emergency ──────────────────────────────── */
+    .pulse-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: 0 0 0 0 rgba(255,80,80,.5);
+      animation: pulsering 2s ease-out infinite;
+      pointer-events: none;
+    }
+    @keyframes pulsering {
+      0%   { box-shadow: 0 0 0 0 rgba(255,80,80,.45); }
+      70%  { box-shadow: 0 0 0 14px rgba(255,80,80,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,80,80,0); }
+    }
+
+    /* ─── Health card ──────────────────────────────────────────── */
+    .health-card {
+      background: linear-gradient(135deg, #ffffff 60%, #f0ecff 100%);
+      border-radius: 1.4rem;
+      border: 2px solid #d4b8f8;
+      box-shadow: 0 4px 24px 0 rgba(130,100,200,.1);
+      padding: 1.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .health-card::before {
+      content: '🪪';
+      position: absolute;
+      right: -10px; bottom: -10px;
+      font-size: 7rem;
+      opacity: .05;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .health-row {
+      display: flex;
+      align-items: flex-start;
+      gap: .7rem;
+      padding: .6rem 0;
+      border-bottom: 1px solid #ede8ff;
+      font-size: 1.05rem;
+    }
+    .health-row:last-child { border-bottom: none; }
+    .health-row .icon { font-size: 1.3rem; min-width: 1.6rem; }
+    .health-row .key  { font-weight: 700; color: #5a4890; min-width: 7.5rem; }
+    .health-row .val  { color: #2d3050; font-weight: 600; }
+
+    /* ─── Install FAB ──────────────────────────────────────────── */
+    #installFab {
+      position: fixed;
+      bottom: 1.2rem;
+      right: 1.2rem;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      gap: .5rem;
+      padding: .75rem 1.3rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(135deg, #7a60e8 0%, #4a9ed4 100%);
+      box-shadow: 0 6px 24px 0 rgba(100,80,220,.35);
+      border: none;
+      cursor: pointer;
+      transition: transform .2s ease;
+      animation: fabpop .4s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    #installFab:hover { transform: scale(1.06); }
+    #installFab:active { transform: scale(.97); }
+    @keyframes fabpop {
+      from { transform: scale(0) translateY(20px); opacity: 0; }
+      to   { transform: scale(1) translateY(0);    opacity: 1; }
+    }
+
+    /* ─── Clock ────────────────────────────────────────────────── */
+    #clock {
+      font-size: 2.6rem;
+      font-weight: 900;
+      letter-spacing: -.02em;
+      color: #2d3a6a;
+    }
+    #date-str {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #6a7aaa;
+      text-transform: capitalize;
+    }
+
+    /* ─── Dark mode toggle ─────────────────────────────────────── */
+    #darkToggle {
+      position: absolute;
+      top: 1.1rem; right: 1rem;
+      background: rgba(255,255,255,.45);
+      border: none;
+      border-radius: 999px;
+      padding: .4rem .75rem;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    #darkToggle:hover { background: rgba(255,255,255,.7); }
+
+    /* ─── Dark mode overrides ──────────────────────────────────── */
+    .dark body               { background: #141428; }
+    .dark .call-btn          { background: #1e2040; border-color: #4a5080; color: #dde4ff; }
+    .dark .call-btn .label small { color: #8890c0; }
+    .dark .call-btn::before  { background: linear-gradient(135deg,#1e2a50 0%,#2a1e50 100%); }
+    .dark .health-card        { background: linear-gradient(135deg,#1e2040 60%,#251a40 100%); border-color: #4a3880; }
+    .dark .health-row         { border-bottom-color: #2a2050; }
+    .dark .health-row .key    { color: #a896e0; }
+    .dark .health-row .val    { color: #c0c8e8; }
+    .dark .section-pill       { background: #2a2050; color: #c0a8f8; }
+    .dark #clock              { color: #dde4ff; }
+    .dark #date-str           { color: #8890c0; }
+    .dark .header-gradient    { background: linear-gradient(135deg,#20305a 0%,#301a50 100%); }
+
+    /* ─── Scroll-reveal ────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .4s ease, transform .4s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ─── Focus visible global ─────────────────────────────────── */
+    :focus-visible { outline: 3px solid #7a60e8; outline-offset: 3px; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ───── HEADER ──────────────────────────────────────────────── -->
+  <header class="header-gradient px-4 pt-12 pb-6 text-center relative shadow-md">
+
+    <button id="darkToggle" aria-label="Cambiar modo oscuro">🌙</button>
+
+    <!-- Clock -->
+    <div class="mb-3">
+      <div id="clock">00:00</div>
+      <div id="date-str">Cargando…</div>
+    </div>
+
+    <h1 class="text-4xl font-black text-[#2d3a6a] leading-tight mb-1" style="text-shadow:0 2px 8px rgba(100,100,200,.15)">
+      App de Luisa
+    </h1>
+    <p class="text-xl font-bold text-[#4a5490] mb-1">📱 Mi número: <span class="text-[#2d3a6a]">123 456 789</span></p>
+
+    <!-- Instalar header button (visible si no hay FAB listo) -->
+    <button id="installHeaderBtn"
+      class="mt-3 px-5 py-2 rounded-full text-base font-800 font-bold text-white
+             bg-gradient-to-r from-violet-soft to-sky-dark shadow-btn hidden">
+      📲 Instalar App
+    </button>
+  </header>
+
+  <!-- ───── MAIN ─────────────────────────────────────────────────── -->
+  <main class="max-w-lg mx-auto px-4 py-6 space-y-8 pb-28">
+
+    <!-- ── Mi Familia ───────────────────────────────────────────── -->
+    <section aria-labelledby="familia-title" class="reveal">
+      <div class="section-pill" id="familia-title">👨‍👩‍👧‍👦 Mi Familia</div>
+
+      <!-- Hijos -->
+      <p class="text-base font-bold text-[#7a88b0] mb-2 pl-1">Hijos</p>
+      <div class="space-y-3 mb-5">
+
+        <a href="tel:111111111" class="call-btn" aria-label="Llamar a Yoana">
+          <span class="avatar">👩</span>
+          <span class="label">Yoana <small>Hija</small></span>
+          <span class="arrow">📞</span>
+        </a>
+
+        <a href="tel:222222222" class="call-btn" aria-label="Llamar a Manuel">
+          <span class="avatar">👨</span>
+          <span class="label">Manuel <small>Hijo</small></span>
+          <span class="arrow">📞</span>
+        </a>
+
+        <a href="tel:333333333" class="call-btn" aria-label="Llamar a Jorge">
+          <span class="avatar">👨</span>
+          <span class="label">Jorge <small>Hijo</small></span>
+          <span class="arrow">📞</span>
+        </a>
+      </div>
+
+      <!-- Hermanos -->
+      <p class="text-base font-bold text-[#7a88b0] mb-2 pl-1">Hermanos / as</p>
+      <div class="space-y-3">
+        <a href="tel:444444444" class="call-btn sibling" aria-label="Llamar a Hermano/a">
+          <span class="avatar">👤</span>
+          <span class="label">[Nombre hermano/a] <small>Hermano/a</small></span>
+          <span class="arrow">📞</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ── Salud y Emergencias ───────────────────────────────────── -->
+    <section aria-labelledby="salud-title" class="reveal">
+      <div class="section-pill" id="salud-title">🚑 Salud y Emergencias</div>
+
+      <div class="space-y-4">
+
+        <!-- Emergencias (rojo / pulso) -->
+        <a href="tel:107" class="emer-btn red" aria-label="Llamar a Emergencias 107">
+          <span class="pulse-ring"></span>
+          <span class="big-icon">🚑</span>
+          <span class="label">Emergencias <small>Llamar al 107</small></span>
+          <span class="arrow">›</span>
+        </a>
+
+        <!-- Clínica Romagosa -->
+        <a href="tel:3515705000" class="emer-btn teal" aria-label="Llamar a Clínica Romagosa">
+          <span class="big-icon">🏥</span>
+          <span class="label">Clínica Romagosa <small>351 570-5000</small></span>
+          <span class="arrow">›</span>
+        </a>
+
+        <!-- Médico Andrea Luna -->
+        <a href="tel:555555555" class="emer-btn green" aria-label="Llamar a Dra. Andrea Luna">
+          <span class="big-icon">🩺</span>
+          <span class="label">Dra. Andrea Luna <small>Médica de cabecera</small></span>
+          <span class="arrow">›</span>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ── Carnet de Salud ───────────────────────────────────────── -->
+    <section aria-labelledby="carnet-title" class="reveal">
+      <div class="section-pill" id="carnet-title">🪪 Mi Carnet de Salud</div>
+
+      <div class="health-card">
+
+        <!-- Header carnet -->
+        <div class="flex items-center gap-3 mb-4 pb-3" style="border-bottom:2px solid #d4b8f8">
+          <img
+            src="Gemini_Generated_Image_i15jrti15jrti15j.jpg"
+            alt="Foto de Luisa"
+            width="56" height="56"
+            style="width:3.5rem;height:3.5rem;border-radius:999px;object-fit:cover;object-position:center top;border:2.5px solid #d4b8f8;flex-shrink:0;"
+          />
+          <div>
+            <div class="text-xl font-black text-[#3a2870]">Luisa</div>
+            <div class="text-sm font-bold text-[#7a68a0]">Datos de Salud Personales</div>
+          </div>
+        </div>
+
+        <!-- Datos -->
+        <div class="health-row">
+          <span class="icon">🏛️</span>
+          <span class="key">Obra Social</span>
+          <span class="val">PAMI</span>
+        </div>
+        <div class="health-row">
+          <span class="icon">🪪</span>
+          <span class="key">DNI</span>
+          <span class="val">98.765.432</span>
+        </div>
+        <div class="health-row">
+          <span class="icon">🩸</span>
+          <span class="key">Tipo de Sangre</span>
+          <span class="val">A Positivo</span>
+        </div>
+        <div class="health-row">
+          <span class="icon">⚠️</span>
+          <span class="key">Alergias</span>
+          <span class="val">Ninguna</span>
+        </div>
+        <div class="health-row">
+          <span class="icon">📋</span>
+          <span class="key">Info médica</span>
+          <span class="val">Sin enfermedades crónicas</span>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ───── FOOTER ───────────────────────────────────────────────── -->
+  <footer class="text-center py-4 text-sm font-semibold text-[#9090b0]">
+    Hecho con ❤️ para Luisa · 2026
+  </footer>
+
+  <!-- ───── FAB Instalar ─────────────────────────────────────────── -->
+  <button id="installFab" aria-label="Instalar esta aplicación en mi celular">
+    📲 Instalar App
+  </button>
+
+  <!-- ───── SCRIPTS ──────────────────────────────────────────────── -->
+  <script>
+    /* ── Reloj ──────────────────────────────────────────────── */
+    const clockEl   = document.getElementById('clock');
+    const dateEl    = document.getElementById('date-str');
+    const DIAS      = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+    const MESES     = ['enero','febrero','marzo','abril','mayo','junio','julio',
+                       'agosto','septiembre','octubre','noviembre','diciembre'];
+    function updateClock() {
+      const now = new Date();
+      const hh  = String(now.getHours()).padStart(2,'0');
+      const mm  = String(now.getMinutes()).padStart(2,'0');
+      clockEl.textContent = `${hh}:${mm}`;
+      dateEl.textContent  = `${DIAS[now.getDay()]}, ${now.getDate()} de ${MESES[now.getMonth()]}`;
+    }
+    updateClock();
+    setInterval(updateClock, 10_000);
+
+    /* ── Dark-mode toggle ───────────────────────────────────── */
+    const htmlEl      = document.documentElement;
+    const darkToggle  = document.getElementById('darkToggle');
+    const saved       = localStorage.getItem('theme');
+    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      htmlEl.classList.add('dark');
+      darkToggle.textContent = '☀️';
+    }
+    darkToggle.addEventListener('click', () => {
+      const isDark = htmlEl.classList.toggle('dark');
+      darkToggle.textContent = isDark ? '☀️' : '🌙';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    /* ── Scroll reveal ──────────────────────────────────────── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ── PWA Install prompt ─────────────────────────────────── */
+    let deferredPrompt;
+    const installFab       = document.getElementById('installFab');
+    const installHeaderBtn = document.getElementById('installHeaderBtn');
+
+    function showInstall() {
+      installFab.style.display = 'flex';
+      installHeaderBtn.classList.remove('hidden');
+    }
+
+    async function triggerInstall() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installFab.style.display       = 'none';
+        installHeaderBtn.classList.add('hidden');
+      }
+      deferredPrompt = null;
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      showInstall();
+    });
+
+    installFab.addEventListener('click', triggerInstall);
+    installHeaderBtn.addEventListener('click', triggerInstall);
+
+    window.addEventListener('appinstalled', () => {
+      installFab.style.display = 'none';
+      installHeaderBtn.classList.add('hidden');
+    });
+
+    /* ── Haptic feedback on call buttons ────────────────────── */
+    document.querySelectorAll('.call-btn, .emer-btn').forEach(el => {
+      el.addEventListener('pointerdown', () => {
+        if (navigator.vibrate) navigator.vibrate(40);
+      });
+    });
+  </script>
+
+</body>
+</html>
