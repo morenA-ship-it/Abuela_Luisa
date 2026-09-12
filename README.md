@@ -35,6 +35,12 @@ Una aplicación web progresiva (**PWA**) diseñada especialmente para adultos ma
 - 🌓 **Modo Oscuro / Claro**:
   - Selector de tema visual para mejorar la lectura en ambientes con poca o mucha luz, guardado automáticamente en el dispositivo.
 
+- ⚙️ **Panel de Ajustes (Gestión Dinámica de Números)**:
+  - Botón de ajustes `⚙️` en la cabecera para modificar los números telefónicos de familiares y médicos en cualquier momento.
+  - Guarda los números directamente en el almacenamiento local (`localStorage`) del dispositivo.
+  - Actualización global e instantánea de todos los botones de llamada (`tel:`) sin necesidad de tocar código.
+  - Opción de restablecimiento a los valores predeterminados con un solo toque.
+
 - 📲 **Instalable como App Nativa (PWA)**:
   - Compatible con Android e iOS.
   - Se puede agregar directamente a la pantalla de inicio del teléfono mediante el botón flotante **"📲 Instalar App"**.

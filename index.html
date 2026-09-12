@@ -260,19 +260,51 @@
       text-transform: capitalize;
     }
 
-    /* ─── Dark mode toggle ─────────────────────────────────────── */
-    #darkToggle {
+    /* ─── Settings and Dark mode toggles ───────────────────────── */
+    #settingsToggle, #darkToggle {
       position: absolute;
-      top: 1.1rem; right: 1rem;
+      top: 1.1rem;
       background: rgba(255,255,255,.45);
       border: none;
       border-radius: 999px;
       padding: .4rem .75rem;
       font-size: 1.3rem;
       cursor: pointer;
-      transition: background .2s;
+      transition: background .2s, transform .15s;
+      z-index: 10;
     }
-    #darkToggle:hover { background: rgba(255,255,255,.7); }
+    #settingsToggle { left: 1rem; }
+    #darkToggle     { right: 1rem; }
+    #settingsToggle:hover, #darkToggle:hover {
+      background: rgba(255,255,255,.7);
+      transform: scale(1.08);
+    }
+    .dark #settingsToggle, .dark #darkToggle {
+      background: rgba(255,255,255,.15);
+    }
+
+    /* ─── Settings inputs ──────────────────────────────────────── */
+    .settings-input {
+      width: 100%;
+      padding: .65rem .85rem;
+      border-radius: .85rem;
+      border: 2px solid #d4b8f8;
+      background: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2d3a6a;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .settings-input:focus {
+      border-color: #7a60e8;
+      box-shadow: 0 0 0 3px rgba(122,96,232,.18);
+    }
+    .dark .settings-input {
+      background: #141428;
+      border-color: #4a3880;
+      color: #dde4ff;
+    }
 
     /* ─── Dark mode overrides ──────────────────────────────────── */
     .dark body               { background: #141428; }
@@ -306,7 +338,8 @@
   <!-- ───── HEADER ──────────────────────────────────────────────── -->
   <header class="header-gradient px-4 pt-12 pb-6 text-center relative shadow-md">
 
-    <button id="darkToggle" aria-label="Cambiar modo oscuro">🌙</button>
+    <button id="settingsToggle" aria-label="Abrir ajustes de números de teléfono" title="Ajustes de números">⚙️</button>
+    <button id="darkToggle" aria-label="Cambiar modo oscuro" title="Modo oscuro / claro">🌙</button>
 
     <!-- Clock -->
     <div class="mb-3">
@@ -317,7 +350,7 @@
     <h1 class="text-4xl font-black text-[#2d3a6a] leading-tight mb-1" style="text-shadow:0 2px 8px rgba(100,100,200,.15)">
       App de Luisa
     </h1>
-    <p class="text-xl font-bold text-[#4a5490] mb-1">📱 Mi número: <span class="text-[#2d3a6a]">123 456 789</span></p>
+    <p class="text-xl font-bold text-[#4a5490] mb-1">📱 Mi número: <span id="myPhoneDisplay" class="text-[#2d3a6a] dark:text-[#dde4ff]">123 456 789</span></p>
 
     <!-- Instalar header button (visible si no hay FAB listo) -->
     <button id="installHeaderBtn"
@@ -338,19 +371,19 @@
       <p class="text-base font-bold text-[#7a88b0] mb-2 pl-1">Hijos</p>
       <div class="space-y-3 mb-5">
 
-        <a href="tel:111111111" class="call-btn" aria-label="Llamar a Yoana">
+        <a id="callYoana" href="tel:111111111" class="call-btn" aria-label="Llamar a Yoana">
           <span class="avatar">👩</span>
           <span class="label">Yoana <small>Hija</small></span>
           <span class="arrow">📞</span>
         </a>
 
-        <a href="tel:222222222" class="call-btn" aria-label="Llamar a Manuel">
+        <a id="callManuel" href="tel:222222222" class="call-btn" aria-label="Llamar a Manuel">
           <span class="avatar">👨</span>
           <span class="label">Manuel <small>Hijo</small></span>
           <span class="arrow">📞</span>
         </a>
 
-        <a href="tel:333333333" class="call-btn" aria-label="Llamar a Jorge">
+        <a id="callJorge" href="tel:333333333" class="call-btn" aria-label="Llamar a Jorge">
           <span class="avatar">👨</span>
           <span class="label">Jorge <small>Hijo</small></span>
           <span class="arrow">📞</span>
@@ -360,9 +393,9 @@
       <!-- Hermanos -->
       <p class="text-base font-bold text-[#7a88b0] mb-2 pl-1">Hermanos / as</p>
       <div class="space-y-3">
-        <a href="tel:444444444" class="call-btn sibling" aria-label="Llamar a Hermano/a">
+        <a id="callHermano" href="tel:444444444" class="call-btn sibling" aria-label="Llamar a Hermano/a">
           <span class="avatar">👤</span>
-          <span class="label">[Nombre hermano/a] <small>Hermano/a</small></span>
+          <span class="label"><span id="nameHermano">[Nombre hermano/a]</span> <small>Hermano/a</small></span>
           <span class="arrow">📞</span>
         </a>
       </div>
@@ -375,24 +408,24 @@
       <div class="space-y-4">
 
         <!-- Emergencias (rojo / pulso) -->
-        <a href="tel:107" class="emer-btn red" aria-label="Llamar a Emergencias 107">
+        <a id="callEmergencias" href="tel:107" class="emer-btn red" aria-label="Llamar a Emergencias 107">
           <span class="pulse-ring"></span>
           <span class="big-icon">🚑</span>
-          <span class="label">Emergencias <small>Llamar al 107</small></span>
+          <span class="label">Emergencias <small id="subEmergencias">Llamar al 107</small></span>
           <span class="arrow">›</span>
         </a>
 
         <!-- Clínica Romagosa -->
-        <a href="tel:3515705000" class="emer-btn teal" aria-label="Llamar a Clínica Romagosa">
+        <a id="callClinica" href="tel:3515705000" class="emer-btn teal" aria-label="Llamar a Clínica Romagosa">
           <span class="big-icon">🏥</span>
-          <span class="label">Clínica Romagosa <small>351 570-5000</small></span>
+          <span class="label">Clínica Romagosa <small id="subClinica">351 570-5000</small></span>
           <span class="arrow">›</span>
         </a>
 
         <!-- Médico Andrea Luna -->
-        <a href="tel:555555555" class="emer-btn green" aria-label="Llamar a Dra. Andrea Luna">
+        <a id="callMedico" href="tel:555555555" class="emer-btn green" aria-label="Llamar a Dra. Andrea Luna">
           <span class="big-icon">🩺</span>
-          <span class="label">Dra. Andrea Luna <small>Médica de cabecera</small></span>
+          <span class="label">Dra. Andrea Luna <small id="subMedico">Médica de cabecera</small></span>
           <span class="arrow">›</span>
         </a>
 
@@ -450,6 +483,128 @@
     </section>
 
   </main>
+
+  <!-- ───── MODAL DE AJUSTES (CONFIGURACIÓN) ──────────────────────── -->
+  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm hidden" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+    <div class="bg-white dark:bg-[#1e2040] rounded-3xl p-6 shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border-2 border-[#d4b8f8] dark:border-[#4a3880] space-y-5">
+
+      <!-- Header Modal -->
+      <div class="flex items-center justify-between border-b pb-3 border-[#ede8ff] dark:border-[#2a2050]">
+        <div>
+          <h2 id="settingsModalTitle" class="text-2xl font-black text-[#2d3a6a] dark:text-[#dde4ff] flex items-center gap-2">
+            ⚙️ Ajustes de Teléfonos
+          </h2>
+          <p class="text-xs font-bold text-[#7a88b0] dark:text-[#8890c0] mt-0.5">
+            Edita los números para llamadas directas
+          </p>
+        </div>
+        <button id="closeSettingsBtn" class="text-2xl p-1.5 text-[#7a88b0] hover:text-[#2d3a6a] dark:hover:text-white rounded-full transition" aria-label="Cerrar ajustes">
+          ✕
+        </button>
+      </div>
+
+      <!-- Formulario -->
+      <form id="settingsForm" class="space-y-4">
+
+        <!-- Mi Teléfono -->
+        <div class="bg-[#f0f4ff] dark:bg-[#141428] p-3 rounded-2xl border border-[#d6eaff] dark:border-[#252545]">
+          <label for="inputMyPhone" class="block text-xs font-black text-[#4a4080] dark:text-[#c0a8f8] mb-1">
+            📱 Mi Número Propio (Luisa)
+          </label>
+          <input type="tel" id="inputMyPhone" class="settings-input" placeholder="Ej: 123 456 789">
+        </div>
+
+        <!-- Familiares -->
+        <div class="space-y-2.5">
+          <h3 class="text-sm font-black text-[#4a4080] dark:text-[#c0a8f8] flex items-center gap-1.5">
+            👨‍👩‍👧‍👦 Familiares
+          </h3>
+
+          <div>
+            <label for="inputYoana" class="block text-xs font-bold text-[#7a88b0] dark:text-[#8890c0] mb-0.5">
+              👩 Yoana (Hija)
+            </label>
+            <input type="tel" id="inputYoana" class="settings-input" placeholder="Teléfono de Yoana">
+          </div>
+
+          <div>
+            <label for="inputManuel" class="block text-xs font-bold text-[#7a88b0] dark:text-[#8890c0] mb-0.5">
+              👨 Manuel (Hijo)
+            </label>
+            <input type="tel" id="inputManuel" class="settings-input" placeholder="Teléfono de Manuel">
+          </div>
+
+          <div>
+            <label for="inputJorge" class="block text-xs font-bold text-[#7a88b0] dark:text-[#8890c0] mb-0.5">
+              👨 Jorge (Hijo)
+            </label>
+            <input type="tel" id="inputJorge" class="settings-input" placeholder="Teléfono de Jorge">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="inputHermanoNombre" class="block text-xs font-bold text-[#7a88b0] dark:text-[#8890c0] mb-0.5">
+                👤 Nombre Hermano/a
+              </label>
+              <input type="text" id="inputHermanoNombre" class="settings-input" placeholder="Nombre">
+            </div>
+            <div>
+              <label for="inputHermanoPhone" class="block text-xs font-bold text-[#7a88b0] dark:text-[#8890c0] mb-0.5">
+                📞 Teléfono
+              </label>
+              <input type="tel" id="inputHermanoPhone" class="settings-input" placeholder="Teléfono">
+            </div>
+          </div>
+        </div>
+
+        <!-- Salud y Emergencias -->
+        <div class="space-y-2.5">
+          <h3 class="text-sm font-black text-[#4a4080] dark:text-[#c0a8f8] flex items-center gap-1.5">
+            🚑 Salud y Emergencias
+          </h3>
+
+          <div>
+            <label for="inputEmergencias" class="block text-xs font-bold text-[#7a88b0] dark:text-[#8890c0] mb-0.5">
+              🚑 Emergencias (Ambulancia)
+            </label>
+            <input type="tel" id="inputEmergencias" class="settings-input" placeholder="107">
+          </div>
+
+          <div>
+            <label for="inputClinica" class="block text-xs font-bold text-[#7a88b0] dark:text-[#8890c0] mb-0.5">
+              🏥 Clínica Romagosa
+            </label>
+            <input type="tel" id="inputClinica" class="settings-input" placeholder="351 570-5000">
+          </div>
+
+          <div>
+            <label for="inputMedico" class="block text-xs font-bold text-[#7a88b0] dark:text-[#8890c0] mb-0.5">
+              🩺 Dra. Andrea Luna (Cabecera)
+            </label>
+            <input type="tel" id="inputMedico" class="settings-input" placeholder="Teléfono Dra. Luna">
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="pt-2 space-y-2">
+          <button type="submit" class="w-full py-3.5 px-4 rounded-2xl text-base font-black text-white bg-gradient-to-r from-[#7a60e8] to-[#4a9ed4] hover:opacity-95 active:scale-[0.98] shadow-btn transition">
+            💾 Guardar Teléfonos
+          </button>
+
+          <button type="button" id="resetContactsBtn" class="w-full py-2 text-xs font-bold text-[#7a88b0] hover:text-[#d94040] dark:hover:text-[#f8b8b8] transition text-center">
+            🔄 Restablecer números por defecto
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notificación -->
+  <div id="toastNotification" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-[#28a745] text-white font-black px-6 py-3 rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none text-sm translate-y-[-10px] flex items-center gap-2">
+    <span>✅</span>
+    <span id="toastMessage">¡Números guardados con éxito!</span>
+  </div>
 
   <!-- ───── FOOTER ───────────────────────────────────────────────── -->
   <footer class="text-center py-4 text-sm font-semibold text-[#9090b0]">
@@ -529,9 +684,158 @@
     installFab.addEventListener('click', triggerInstall);
     installHeaderBtn.addEventListener('click', triggerInstall);
 
-    window.addEventListener('appinstalled', () => {
-      installFab.style.display = 'none';
-      installHeaderBtn.classList.add('hidden');
+    /* ── Gestión Dinámica de Teléfonos ───────────────────────── */
+    const DEFAULT_CONTACTS = {
+      myPhone: "123 456 789",
+      yoana: "111111111",
+      manuel: "222222222",
+      jorge: "333333333",
+      hermanoNombre: "[Nombre hermano/a]",
+      hermanoPhone: "444444444",
+      emergencias: "107",
+      clinica: "351 570-5000",
+      medico: "555555555"
+    };
+
+    function getContacts() {
+      try {
+        const stored = localStorage.getItem('luisa_contacts');
+        return stored ? { ...DEFAULT_CONTACTS, ...JSON.parse(stored) } : { ...DEFAULT_CONTACTS };
+      } catch {
+        return { ...DEFAULT_CONTACTS };
+      }
+    }
+
+    function cleanPhone(num) {
+      if (!num) return '';
+      return String(num).replace(/[^0-9+]/g, '');
+    }
+
+    function applyContacts(c) {
+      // Teléfono propio
+      const myPhoneEl = document.getElementById('myPhoneDisplay');
+      if (myPhoneEl) myPhoneEl.textContent = c.myPhone || DEFAULT_CONTACTS.myPhone;
+
+      // Hijos
+      const callYoana = document.getElementById('callYoana');
+      if (callYoana) callYoana.href = 'tel:' + cleanPhone(c.yoana);
+
+      const callManuel = document.getElementById('callManuel');
+      if (callManuel) callManuel.href = 'tel:' + cleanPhone(c.manuel);
+
+      const callJorge = document.getElementById('callJorge');
+      if (callJorge) callJorge.href = 'tel:' + cleanPhone(c.jorge);
+
+      // Hermano/a
+      const callHermano = document.getElementById('callHermano');
+      if (callHermano) callHermano.href = 'tel:' + cleanPhone(c.hermanoPhone);
+      const nameHermano = document.getElementById('nameHermano');
+      if (nameHermano) nameHermano.textContent = c.hermanoNombre || DEFAULT_CONTACTS.hermanoNombre;
+
+      // Emergencias
+      const callEmergencias = document.getElementById('callEmergencias');
+      if (callEmergencias) callEmergencias.href = 'tel:' + cleanPhone(c.emergencias);
+      const subEmergencias = document.getElementById('subEmergencias');
+      if (subEmergencias) subEmergencias.textContent = 'Llamar al ' + (c.emergencias || DEFAULT_CONTACTS.emergencias);
+
+      // Clínica
+      const callClinica = document.getElementById('callClinica');
+      if (callClinica) callClinica.href = 'tel:' + cleanPhone(c.clinica);
+      const subClinica = document.getElementById('subClinica');
+      if (subClinica) subClinica.textContent = c.clinica || DEFAULT_CONTACTS.clinica;
+
+      // Médico
+      const callMedico = document.getElementById('callMedico');
+      if (callMedico) callMedico.href = 'tel:' + cleanPhone(c.medico);
+    }
+
+    // Inicializar contactos al cargar
+    let currentContacts = getContacts();
+    applyContacts(currentContacts);
+
+    // Modal y lógica de configuración
+    const settingsModal    = document.getElementById('settingsModal');
+    const settingsToggle   = document.getElementById('settingsToggle');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+    const settingsForm     = document.getElementById('settingsForm');
+    const resetContactsBtn = document.getElementById('resetContactsBtn');
+    const toastNotification= document.getElementById('toastNotification');
+    const toastMessage     = document.getElementById('toastMessage');
+
+    function showToast(msg) {
+      toastMessage.textContent = msg;
+      toastNotification.classList.remove('opacity-0', 'translate-y-[-10px]', 'pointer-events-none');
+      toastNotification.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toastNotification.classList.remove('opacity-100', 'translate-y-0');
+        toastNotification.classList.add('opacity-0', 'translate-y-[-10px]', 'pointer-events-none');
+      }, 2500);
+    }
+
+    function populateForm(c) {
+      document.getElementById('inputMyPhone').value      = c.myPhone || '';
+      document.getElementById('inputYoana').value        = c.yoana || '';
+      document.getElementById('inputManuel').value       = c.manuel || '';
+      document.getElementById('inputJorge').value        = c.jorge || '';
+      document.getElementById('inputHermanoNombre').value= c.hermanoNombre || '';
+      document.getElementById('inputHermanoPhone').value = c.hermanoPhone || '';
+      document.getElementById('inputEmergencias').value  = c.emergencias || '';
+      document.getElementById('inputClinica').value      = c.clinica || '';
+      document.getElementById('inputMedico').value       = c.medico || '';
+    }
+
+    function openSettings() {
+      populateForm(getContacts());
+      settingsModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSettings() {
+      settingsModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    settingsToggle.addEventListener('click', openSettings);
+    closeSettingsBtn.addEventListener('click', closeSettings);
+
+    settingsModal.addEventListener('click', (e) => {
+      if (e.target === settingsModal) closeSettings();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !settingsModal.classList.contains('hidden')) {
+        closeSettings();
+      }
+    });
+
+    settingsForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const updated = {
+        myPhone:       document.getElementById('inputMyPhone').value.trim() || DEFAULT_CONTACTS.myPhone,
+        yoana:         document.getElementById('inputYoana').value.trim() || DEFAULT_CONTACTS.yoana,
+        manuel:        document.getElementById('inputManuel').value.trim() || DEFAULT_CONTACTS.manuel,
+        jorge:         document.getElementById('inputJorge').value.trim() || DEFAULT_CONTACTS.jorge,
+        hermanoNombre: document.getElementById('inputHermanoNombre').value.trim() || DEFAULT_CONTACTS.hermanoNombre,
+        hermanoPhone:  document.getElementById('inputHermanoPhone').value.trim() || DEFAULT_CONTACTS.hermanoPhone,
+        emergencias:   document.getElementById('inputEmergencias').value.trim() || DEFAULT_CONTACTS.emergencias,
+        clinica:       document.getElementById('inputClinica').value.trim() || DEFAULT_CONTACTS.clinica,
+        medico:        document.getElementById('inputMedico').value.trim() || DEFAULT_CONTACTS.medico
+      };
+      localStorage.setItem('luisa_contacts', JSON.stringify(updated));
+      currentContacts = updated;
+      applyContacts(currentContacts);
+      closeSettings();
+      showToast('✅ ¡Números guardados con éxito!');
+    });
+
+    resetContactsBtn.addEventListener('click', () => {
+      if (confirm('¿Deseas restablecer todos los números a los valores originales?')) {
+        localStorage.removeItem('luisa_contacts');
+        currentContacts = { ...DEFAULT_CONTACTS };
+        applyContacts(currentContacts);
+        populateForm(currentContacts);
+        showToast('🔄 Números restablecidos');
+      }
     });
 
     /* ── Haptic feedback on call buttons ────────────────────── */
